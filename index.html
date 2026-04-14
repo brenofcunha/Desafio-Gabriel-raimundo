@@ -3,46 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Me Aperte</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background-color: #f0f4f8;
-      font-family: Arial, sans-serif;
-    }
-
-    button {
-      padding: 20px 40px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #ffffff;
-      background-color: #3b82f6;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: background-color 0.2s, transform 0.1s;
-    }
-
-    button:hover {
-      background-color: #2563eb;
-    }
-
-    button:active {
-      transform: scale(0.97);
-    }
-  </style>
+  <title>Desafio Sudeste</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <button onclick="window.location.href='result.html'">me aperte</button>
+<body class="page page-home">
+  <main class="panel hero">
+    <span class="eyebrow">Desafio de condicional</span>
+    <h1>Descobrindo sua UF</h1>
+    <p class="lead">
+      Clique no botao para identificador a qual UF você pertence a regiao Sudeste.
+    </p>
+
+    <button id="detect-button" class="button" type="button">Identificar origem</button>
+
+    <p id="loading" class="status" hidden>Consultando IP e localizacao...</p>
+
+    <section id="content" class="result-content" hidden>
+      <h2 id="headline">Resultado da consulta</h2>
+      <p id="ip-text" class="info"></p>
+      <p id="location-text" class="location"></p>
+      <p id="message-text" class="message"></p>
+      <p id="extra-info" class="info"></p>
+
+      <button id="tourism-button" class="button button-secondary" type="button" hidden>
+        Ver pontos turisticos da regiao
+      </button>
+
+      <section id="tourism-section" class="tourism" hidden>
+        <h3 id="tourism-title" class="tourism-title"></h3>
+        <div id="tourism-grid" class="tourism-grid"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  
 </body>
 </html>
