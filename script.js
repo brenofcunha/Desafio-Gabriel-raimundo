@@ -107,6 +107,31 @@ function inferRegionCodeFromName(regionName) {
 async function fetchGeolocation() {
   const providers = [
     {
+      name: "internal-api",
+      async request() {
+        const response = await fetch("/api/geolocation");
+
+        if (!response.ok) {
+          throw new Error(`internal-api: HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data || !data.countryCode) {
+          throw new Error("internal-api: dados incompletos");
+        }
+
+        return {
+          ip: data.ip || "",
+          city: data.city || "",
+          regionCode: (data.regionCode || "").toUpperCase(),
+          regionName: data.regionName || "",
+          countryCode: (data.countryCode || "").toUpperCase(),
+          countryName: data.countryName || "",
+        };
+      },
+    },
+    {
       name: "ipapi",
       async request() {
         const response = await fetch("https://ipapi.co/json/");
@@ -152,42 +177,25 @@ async function fetchGeolocation() {
       },
     },
     {
-      name: "ipify-ipapi",
+      name: "ipinfo",
       async request() {
-        const ipResponse = await fetch("https://api.ipify.org?format=json");
+        const response = await fetch("https://ipinfo.io/json");
 
-        if (!ipResponse.ok) {
-          throw new Error(`ipify: HTTP ${ipResponse.status}`);
+        if (!response.ok) {
+          throw new Error(`ipinfo: HTTP ${response.status}`);
         }
 
-        const ipData = await ipResponse.json();
-        const ip = ipData.ip || "";
-
-        if (!ip) {
-          throw new Error("ipify: IP nao retornado");
-        }
-
-        const geoResponse = await fetch(
-          `http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,regionName,city,query`
-        );
-
-        if (!geoResponse.ok) {
-          throw new Error(`ip-api: HTTP ${geoResponse.status}`);
-        }
-
-        const geoData = await geoResponse.json();
-
-        if (geoData.status !== "success") {
-          throw new Error(`ip-api: ${geoData.message || "consulta falhou"}`);
-        }
+        const data = await response.json();
+        const regionName = data.region || "";
+        const regionCode = inferRegionCodeFromName(regionName);
 
         return {
-          ip: geoData.query || ip,
-          city: geoData.city || "",
-          regionCode: (geoData.region || "").toUpperCase(),
-          regionName: geoData.regionName || "",
-          countryCode: (geoData.countryCode || "").toUpperCase(),
-          countryName: geoData.country || "",
+          ip: data.ip || "",
+          city: data.city || "",
+          regionCode,
+          regionName,
+          countryCode: (data.country || "").toUpperCase(),
+          countryName: (data.country || "").toUpperCase() === "BR" ? "Brasil" : "",
         };
       },
     },
